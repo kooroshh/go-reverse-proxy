@@ -1,0 +1,17 @@
+{
+  "servers": [
+    {
+      "local_address" : "127.0.0.1:3050",
+      "remote_address" : "172.16.0.10:80"
+    },
+    {
+      "local_address" : "127.0.0.1:3051",
+      "remote_address" : "172.16.0.10:80"
+    },
+    {
+      "local_address" : "127.0.0.1:3052",
+      "remote_address" : "172.16.0.10:80"
+    }
+  ],
+  "log_level" : "debug"
+}
