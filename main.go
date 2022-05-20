@@ -12,6 +12,7 @@ import (
 
 var ProxyList []*Proxy
 var ShouldLog bool = false
+var conf Config
 
 func main() {
 	tag := "[MAIN]"
@@ -38,7 +39,6 @@ func main() {
 		Log(LOG_ERROR, tag, "Unable to read the config file")
 		os.Exit(1)
 	}
-	var conf Config
 	err = json.Unmarshal(content, &conf)
 	if err != nil {
 		Log(LOG_ERROR, tag, "Unable to parse the config file")
@@ -46,8 +46,12 @@ func main() {
 	}
 	ShouldLog = conf.LogLevel == "debug"
 	//endregion
+	//region Init cache
 	CacheInit()
-	UpdateUserDB()
+	//endregion
+	//region Start In Memory DB Update
+	go UpdateUserDB()
+	//endregion
 	//region Start Proxy
 	for _, s := range conf.Servers {
 		proxy := NewProxy(s.LocalAddress, s.RemoteAddress)
@@ -57,10 +61,9 @@ func main() {
 	//endregion
 	//region Start AMPQ Listener if available
 	if conf.Ampq.Enable {
-		StartAmpq(conf.Ampq.ConnectionString, conf.Ampq.Exchange, conf.NodeName)
+		StartAmpq(conf.Ampq.ConnectionString, conf.Ampq.Exchange, conf.Node)
 	}
 	//endregion
-
 	//region Wait for interrupt
 	<-interrupt
 	for _, proxy := range ProxyList {

@@ -5,11 +5,18 @@ type Config struct {
 		LocalAddress  string `json:"local_address"`
 		RemoteAddress string `json:"remote_address"`
 	} `json:"servers"`
+	Users struct {
+		Mode     string   `json:"mode"`
+		Urls     []string `json:"urls"`
+		Periodic bool     `json:"periodic"`
+		Interval int      `json:"interval"`
+	} `json:"users"`
 	Ampq struct {
 		Enable           bool   `json:"enable"`
 		Exchange         string `json:"exchange"`
 		ConnectionString string `json:"connection_string"`
 	} `json:"ampq"`
-	NodeName string `json:"node"`
+	Node     string `json:"node"`
+	Secret   string `json:"secret"`
 	LogLevel string `json:"log_level"`
 }

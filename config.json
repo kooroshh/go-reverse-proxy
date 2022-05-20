@@ -2,14 +2,23 @@
   "servers": [
     {
       "local_address" : "127.0.0.1:3050",
-      "remote_address" : "172.16.0.10:80"
+      "remote_address" : "127.0.0.1:80"
     }
   ],
+  "users": {
+    "mode" : "blacklist",
+    "urls" : [
+      "http://127.0.0.1:4000/api/getActiveIPList"
+    ],
+    "periodic" : true,
+    "interval" : 5
+  },
   "ampq": {
     "enable" : true,
     "exchange" : "clients",
     "connection_string" : "amqp://guest:guest@172.16.0.10:5672"
   },
   "node" : "DareDevil",
+  "secret": "20begeijdbgq3p908as",
   "log_level" : "debug"
 }

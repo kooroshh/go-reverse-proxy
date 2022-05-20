@@ -68,6 +68,7 @@ func processMessage(message []byte) {
 		Log(LOG_ERROR, ampqTag, "Invalid Message Queue", err)
 		return
 	}
+	Log(LOG_DEBUG, ampqTag, cmd)
 	if cmd.Action == "delete" {
 		userDB.Delete(cmd.Address)
 	} else if cmd.Action == "add" {

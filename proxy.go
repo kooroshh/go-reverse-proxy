@@ -36,6 +36,24 @@ func (p *Proxy) Start() {
 	l.Close()
 }
 func (p *Proxy) handleConnection(clientConn net.Conn) {
+	if addr, ok := clientConn.RemoteAddr().(*net.TCPAddr); ok {
+		ip := addr.IP.String()
+		_, exists := userDB.Get(ip)
+		switch conf.Users.Mode {
+		case "whitelist":
+			if !exists {
+				clientConn.Close()
+				p.log("[WHITELIST]", ip, "doesn't exists in user db")
+				return
+			}
+		case "blacklist":
+			if exists {
+				clientConn.Close()
+				p.log("[BLACKLIST]", ip, "exists in user db")
+				return
+			}
+		}
+	}
 	defer clientConn.Close()
 	serverConn, err := net.Dial("tcp", p.TargetAddr)
 	if err != nil {
