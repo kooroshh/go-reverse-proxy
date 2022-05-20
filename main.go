@@ -14,6 +14,7 @@ var ProxyList []*Proxy
 var ShouldLog bool = false
 
 func main() {
+	tag := "[MAIN]"
 	var err error
 	var configFile string
 	interrupt := make(chan os.Signal, 1)
@@ -34,17 +35,19 @@ func main() {
 	//region Read config file
 	content, err := ioutil.ReadFile(configFile)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to read the config file")
+		Log(LOG_ERROR, tag, "Unable to read the config file")
 		os.Exit(1)
 	}
 	var conf Config
 	err = json.Unmarshal(content, &conf)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to parse the config file")
+		Log(LOG_ERROR, tag, "Unable to parse the config file")
 		os.Exit(1)
 	}
 	ShouldLog = conf.LogLevel == "debug"
 	//endregion
+	CacheInit()
+	UpdateUserDB()
 	//region Start Proxy
 	for _, s := range conf.Servers {
 		proxy := NewProxy(s.LocalAddress, s.RemoteAddress)
@@ -52,11 +55,18 @@ func main() {
 		ProxyList = append(ProxyList, proxy)
 	}
 	//endregion
+	//region Start AMPQ Listener if available
+	if conf.Ampq.Enable {
+		StartAmpq(conf.Ampq.ConnectionString, conf.Ampq.Exchange, conf.NodeName)
+	}
+	//endregion
+
 	//region Wait for interrupt
 	<-interrupt
 	for _, proxy := range ProxyList {
 		proxy.Stop()
 	}
-	fmt.Fprintln(os.Stdout, "Interrupt received, shutting down...")
+	StopAmpq()
+	Log(LOG_INFO, LOG_INFO, "Interrupt received, shutting down...")
 	//endregion
 }

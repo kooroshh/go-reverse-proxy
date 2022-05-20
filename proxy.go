@@ -13,9 +13,7 @@ type Proxy struct {
 }
 
 func (p *Proxy) log(args ...interface{}) {
-	if ShouldLog {
-		log.Println("[DEBUG] ", "["+p.ListenAddr+"] ", args)
-	}
+	Log(LOG_DEBUG, "[PROXY]", p.ListenAddr, args)
 }
 func (p *Proxy) Start() {
 	l, err := net.Listen("tcp", p.ListenAddr)

@@ -3,15 +3,13 @@
     {
       "local_address" : "127.0.0.1:3050",
       "remote_address" : "172.16.0.10:80"
-    },
-    {
-      "local_address" : "127.0.0.1:3051",
-      "remote_address" : "172.16.0.10:80"
-    },
-    {
-      "local_address" : "127.0.0.1:3052",
-      "remote_address" : "172.16.0.10:80"
     }
   ],
+  "ampq": {
+    "enable" : true,
+    "exchange" : "clients",
+    "connection_string" : "amqp://guest:guest@172.16.0.10:5672"
+  },
+  "node" : "DareDevil",
   "log_level" : "debug"
 }
