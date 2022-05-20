@@ -69,7 +69,9 @@ func main() {
 	for _, proxy := range ProxyList {
 		proxy.Stop()
 	}
-	StopAmpq()
+	if conf.Ampq.Enable {
+		StopAmpq()
+	}
 	Log(LOG_INFO, LOG_INFO, "Interrupt received, shutting down...")
 	//endregion
 }
