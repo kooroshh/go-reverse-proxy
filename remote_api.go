@@ -23,6 +23,7 @@ func UpdateUserDB() {
 				continue
 			}
 			req.Header.Add("Authorization", conf.Secret)
+			req.Header.Add("User-Agent", "Go-Reverse-Proxy/1.0")
 			res, err := httpClient.Do(req)
 			if err != nil {
 				Log(LOG_ERROR, tag, "Unable to get response")
