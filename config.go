@@ -19,4 +19,8 @@ type Config struct {
 	Node     string `json:"node"`
 	Secret   string `json:"secret"`
 	LogLevel string `json:"log_level"`
+	Stats    struct {
+		ListenAddress string `json:"listen_address"`
+		Enable        bool   `json:"enable"`
+	} `json:"stats"`
 }

@@ -10,6 +10,7 @@ type Proxy struct {
 	ListenAddr string
 	TargetAddr string
 	exit       chan struct{}
+	Stats      Stats
 }
 
 func (p *Proxy) log(args ...interface{}) {
@@ -39,19 +40,24 @@ func (p *Proxy) handleConnection(clientConn net.Conn) {
 	if addr, ok := clientConn.RemoteAddr().(*net.TCPAddr); ok {
 		ip := addr.IP.String()
 		_, exists := userDB.Get(ip)
+		p.Stats.TotalConnections++
 		switch conf.Users.Mode {
 		case "whitelist":
 			if !exists {
 				clientConn.Close()
+				p.Stats.RejectedConnections++
 				p.log("[WHITELIST]", ip, "doesn't exists in user db")
 				return
 			}
+			p.Stats.AcceptedConnections++
 		case "blacklist":
 			if exists {
 				clientConn.Close()
+				p.Stats.RejectedConnections++
 				p.log("[BLACKLIST]", ip, "exists in user db")
 				return
 			}
+			p.Stats.AcceptedConnections++
 		}
 	}
 	defer clientConn.Close()
@@ -73,5 +79,10 @@ func NewProxy(listenAddr, targetAddr string) *Proxy {
 		ListenAddr: listenAddr,
 		TargetAddr: targetAddr,
 		exit:       make(chan struct{}),
+		Stats: Stats{
+			TotalConnections:    0,
+			AcceptedConnections: 0,
+			RejectedConnections: 0,
+		},
 	}
 }

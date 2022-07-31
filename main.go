@@ -61,7 +61,12 @@ func main() {
 	//endregion
 	//region Start AMPQ Listener if available
 	if conf.Ampq.Enable {
-		StartAmpq(conf.Ampq.ConnectionString, conf.Ampq.Exchange, conf.Node)
+		go StartAmpq(conf.Ampq.ConnectionString, conf.Ampq.Exchange, conf.Node)
+	}
+	//endregion
+	//region Stats
+	if conf.Stats.Enable {
+		go StartStatsServer(conf.Stats.ListenAddress)
 	}
 	//endregion
 	//region Wait for interrupt
@@ -72,6 +77,6 @@ func main() {
 	if conf.Ampq.Enable {
 		StopAmpq()
 	}
-	Log(LOG_INFO, LOG_INFO, "Interrupt received, shutting down...")
+	Log(LOG_INFO, tag, "Interrupt received, shutting down...")
 	//endregion
 }

@@ -20,5 +20,9 @@
   },
   "node" : "DareDevil",
   "secret": "20begeijdbgq3p908as",
-  "log_level" : "debug"
+  "log_level" : "debug",
+  "stats" : {
+    "enable" : true,
+    "listen_address": "127.0.0.1:3051"
+  }
 }
